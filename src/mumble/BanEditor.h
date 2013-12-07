@@ -51,6 +51,7 @@ class BanEditor : public QDialog, public Ui::BanEditor {
 		Ban toBan(bool &);
 	public:
 		BanEditor(const MumbleProto::BanList &msbl, QWidget *p = NULL);
+		void addBan(Ban);
 	public slots:
 		void accept();
 		void on_qlwBans_currentRowChanged();
@@ -66,6 +67,7 @@ class BanEditor : public QDialog, public Ui::BanEditor {
 		void on_qleReason_textChanged(QString );
 		void on_qleIP_textChanged(QString );
 		void on_qleUser_textChanged(QString );
+
 };
 
 #endif
