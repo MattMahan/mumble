@@ -55,6 +55,10 @@
 #include "NetworkConfig.h"
 #include "CrashReporter.h"
 #include "SocketRPC.h"
+#include <iostream>
+#include "BanEditor.h"
+#include <QTime>
+#include "Net.h"
 
 #if defined(USE_STATIC_QT_PLUGINS) && QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_IMPORT_PLUGIN(qtaccessiblewidgets)
@@ -540,6 +544,35 @@ int main(int argc, char **argv) {
 
 	if (sh)
 		sh->disconnect();
+
+
+
+
+
+	using namespace std;
+	cout << "THE TEST" << endl;
+
+	QTime time = QTime::currentTime();	
+
+	MumbleProto::BanList testy;
+
+	BanEditor Test(testy);
+
+	Ban b;
+	Test.addBan(b);
+
+	Test.refreshBanList();
+
+	cout << time.msecsTo(QTime::currentTime()) << endl;
+
+	cout << "TEST COMPLETE" << endl;
+
+
+
+
+
+
+
 
 	delete srpc;
 

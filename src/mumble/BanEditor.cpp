@@ -273,3 +273,7 @@ void BanEditor::on_qpbClear_clicked()
 	qpbUpdate->setDisabled(true);
 	qpbRemove->setDisabled(true);
 }
+
+void BanEditor::addBan(Ban b){
+	qlBans.append(b);
+}
