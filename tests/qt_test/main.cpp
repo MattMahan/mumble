@@ -1,8 +1,11 @@
 #include <iostream>
+#include <sstream>
 #include <QList>
 #include <QVector>
 #include <QTime>
 #include <vector>
+#include <QtAlgorithms>
+#include <string>
 #include "Element.h"
 
 using namespace std;
@@ -24,13 +27,36 @@ Element::Element(int a, int b, int c, std::string d, std::string e, std::string 
 	string_three = f;
 }
 
+bool lessThan(const Element & e1, const Element & e2){
+	if(e1.value_one < e2.value_one) return true;
+	else return false;
+}
+
 int randInt(int low, int high){
 	// Random number between low and high
 	return qrand() % ((high - 1) - low) + low;
 }
 
+std::string compareTimes(const double & QList_time, const double & QVector_time){
+	std::ostringstream s;
+	if(QList_time > QVector_time){
+			double diff = QList_time - QVector_time;
+			int pct_diff = (diff/QList_time)*100;
+			s << "QVector outperformed QList by " << "ms ( " << pct_diff << "% )";
+	}
+	else if(QVector_time > QList_time){
+		int diff = QVector_time - QList_time;
+		int pct_diff = ((double)diff/QVector_time)*100;
+		s << "QList outperformed QVector by " << diff << "ms ( " << pct_diff << "% )";
+	}
+	else s << "QList and QVector had equal performance.";
+	return s.str();
+}
+
+
 int main()
 {
+
 	// Seed the random number generator
 	QTime time = QTime::currentTime();
 	qsrand((uint)time.msec());
@@ -54,14 +80,17 @@ int main()
 
 	// Fill up the QList with Elements
 	QList<Element> list;
+	int QList_insertion_time;
 	currentTime = QTime::currentTime();
 	for(unsigned i = 0; i < NUM_ITEMS; i++){
 		Element temp(array[i],array[i],array[i],"qwertyuiop","asdfghjkl","zxcvbnm");
 		list.append(temp);
 	}
 	// Report outcome to terminal
-	cout << "QList insertion: " << currentTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	QList_insertion_time = currentTime.msecsTo(QTime::currentTime());
+	cout << "QList insertion: " << QList_insertion_time << " ms" << endl;
 
+	int QList_search_time;
 	currentTime = QTime::currentTime();
 	// Run selection sort on list
 	QList<Element>::iterator l_it;
@@ -73,29 +102,42 @@ int main()
 			if((*l_it).value_one == searchNum) break;
 		}
 	}
-	cout << "QList search: " << currentTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	QList_search_time = currentTime.msecsTo(QTime::currentTime());
+	cout << "QList search: " << QList_search_time << " ms" << endl;
+
+	int QList_sort_time;
+	currentTime = QTime::currentTime();
+	// Run qSort on QList
+	qSort(list.begin(),list.end(),lessThan);
+	QList_sort_time = currentTime.msecsTo(QTime::currentTime());
+	cout << "QList qSort: " << QList_sort_time << " ms" << endl;
 
 	// Fill up the vector with Elements
 	QVector<Element> vector;
+	int QVector_insertion_time;
 	currentTime = QTime::currentTime();
 	for(unsigned i = 0; i < NUM_ITEMS; i++){
 		Element temp(array[i],array[i],array[i],"qwertyuiop","asdfghjkl","zxcvbnm");
 		vector.push_back(temp);
 	}
 	// Report outcome to terminal
-	cout << "QVector insertion: " << currentTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	QVector_insertion_time = currentTime.msecsTo(QTime::currentTime());
+	cout << "QVector insertion: " << QVector_insertion_time << " ms" << endl;
 
 	// Fill up the vector with Elements
 	QVector<Element> vector_2;
 	vector_2.reserve(NUM_ITEMS);
+	int QVector_insertion_time_two;
 	currentTime = QTime::currentTime();
 	for(unsigned i = 0; i < NUM_ITEMS; i++){
 		Element temp(array[i],array[i],array[i],"qwertyuiop","asdfghjkl","zxcvbnm");
 		vector_2.push_back(temp);
 	}
 	// Report outcome to terminal
-	cout << "QVector insertion (with pre-allocation): " << currentTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	QVector_insertion_time_two = currentTime.msecsTo(QTime::currentTime());
+	cout << "QVector insertion (with pre-allocation): " << QVector_insertion_time_two << " ms" << endl;
 
+	int QVector_search_time;
 	currentTime = QTime::currentTime();	
 	//Run selection sort on vector
 	QVector<Element>::iterator v_it;
@@ -107,7 +149,28 @@ int main()
 			if((*v_it).value_one == searchNum) break;
 		}
 	}
-	cout << "QVector search: " << currentTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	QVector_search_time = currentTime.msecsTo(QTime::currentTime());
+	cout << "QVector search: " << QVector_search_time << " ms" << endl;
+
+	int QVector_sort_time;
+	currentTime = QTime::currentTime();	
+	// Run qSort on vector
+	qSort( vector.begin(), vector.end(), lessThan );
+	QVector_sort_time = currentTime.msecsTo(QTime::currentTime());
+	cout << "QVector qSort: " << QVector_sort_time << " ms" << endl;
+
+	// REPORT RESULT STATISTICS
+	cout << "RESULT [ Large object Insertion ]: " << compareTimes(QList_insertion_time,QVector_insertion_time) << endl;
+	cout << "RESULT [ Non-movable object Linear search ]: " << compareTimes(QList_search_time,QVector_search_time) << endl;
+	cout << "RESULT [ Non-movable object qSort ]: " << compareTimes(QList_sort_time,QVector_sort_time) << endl;
+
+/************************************************************************************
+
+
+
+
+
+*************************************************************************************/
 
 
 	// Now running benchmarks as inspired by Collections.cpp...
@@ -115,6 +178,7 @@ int main()
 	
 	int sum;
 	QTime middleTime;
+	QTime lastTime;
 
 	currentTime = QTime::currentTime();
 	QList<int> s;
@@ -128,8 +192,12 @@ int main()
 			sum += v;
 		}
 	}
+	// Sort the list
+	lastTime = QTime::currentTime();
+	qSort( s );
 	cout << "QList insertion: " << currentTime.msecsTo(middleTime) << " ms" << endl;
-	cout << "QList iteration: " << middleTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	cout << "QList iteration: " << middleTime.msecsTo(lastTime) << " ms" << endl;
+	cout << "QList sort: " << lastTime.msecsTo(QTime::currentTime()) << " ms" << endl;
 
 	currentTime = QTime::currentTime();
 	QVector<int> qv;
@@ -144,8 +212,12 @@ int main()
 			sum += v;
 		}
 	}
+	// Sort the QVector
+	lastTime = QTime::currentTime();
+	qSort( qv );
 	cout << "QVector insertion: " << currentTime.msecsTo(middleTime) << " ms" << endl;
-	cout << "QVector iteration: " << middleTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	cout << "QVector iteration: " << middleTime.msecsTo(lastTime) << " ms" << endl;
+	cout << "QVector sort: " << lastTime.msecsTo(QTime::currentTime()) << " ms" << endl;
 
 	currentTime = QTime::currentTime();
 	std::vector<int> sv;
@@ -175,4 +247,5 @@ int main()
 		}
 	}
 	cout << "Plain array total: " << currentTime.msecsTo(QTime::currentTime()) << " ms" << endl;
+	
 }
