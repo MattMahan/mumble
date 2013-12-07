@@ -551,21 +551,53 @@ int main(int argc, char **argv) {
 
 	using namespace std;
 	cout << "THE TEST" << endl;
+	cout << "============[TEST BEGINNING]===========" << endl;
 
-	QTime time = QTime::currentTime();	
+	QTime time;	
 
+	// Instantiate BanList
+	time = QTime::currentTime();
 	MumbleProto::BanList testy;
+	cout << "Instantiation of BanList: " << time.msecsTo(QTime::currentTime()) << " ms" << endl;
 
+	// Instantiate BanEditor
+	time = QTime::currentTime();
 	BanEditor Test(testy);
+	cout << "Instantiation of BanEditor: " << time.msecsTo(QTime::currentTime()) << " ms" << endl;
 
-	Ban b;
-	Test.addBan(b);
+	// Instantiate some bans
+	uint numBans = 1024;
+	time = QTime::currentTime();
+	for(uint i=0;i<numBans;i++){
+		Ban b;
+		// Establish ban details (local; edit these)
+		HostAddress address;
+		int mask = 69;		
+		QString username;	
+		QString hash;	
+		QString reason;	
+		QDateTime start;
+		unsigned int duration;
+		// Assign details to ban (on object; don't edit)
+		b.haAddress = address;
+		b.iMask = mask;
+		b.qsUsername = username;
+		b.qsHash = hash;
+		b.qsReason = reason;
+		b.qdtStart = start;
+		b.iDuration = duration;
+		// Add ban to list
+		Test.addBan(b);
+	}
+	cout << "Instantiation and addition of " << numBans << " Bans to BanList: " << time.msecsTo(QTime::currentTime()) << " ms" << endl;
+	
 
+	// Refresh the ban list
+	time = QTime::currentTime();
 	Test.refreshBanList();
+	cout << "Time to refresh the BanList: " << time.msecsTo(QTime::currentTime()) << " ms" << endl;
 
-	cout << time.msecsTo(QTime::currentTime()) << endl;
-
-	cout << "TEST COMPLETE" << endl;
+	cout << "============[TEST COMPLETE]============" << endl;
 
 
 
