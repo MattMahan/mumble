@@ -167,7 +167,7 @@ void BanEditor::on_qpbUpdate_clicked() {
 void BanEditor::on_qpbRemove_clicked() {
 	int idx = qlwBans->currentRow();
 	if (idx >= 0)
-		qlBans.removeAt(idx);
+		qlBans.removeAt(idx);//REIMPLIMENT FOR VECTOR
 	refreshBanList();
 
 	qlwBans->setCurrentRow(-1);
