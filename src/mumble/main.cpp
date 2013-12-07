@@ -566,7 +566,7 @@ int main(int argc, char **argv) {
 	cout << "Instantiation of BanEditor: " << time.msecsTo(QTime::currentTime()) << " ms" << endl;
 
 	// Instantiate some bans
-	uint numBans = 1024;
+	uint numBans = 8192;
 	time = QTime::currentTime();
 	for(uint i=0;i<numBans;i++){
 		Ban b;
