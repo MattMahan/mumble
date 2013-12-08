@@ -55,11 +55,14 @@
 #include "NetworkConfig.h"
 #include "CrashReporter.h"
 #include "SocketRPC.h"
+
 #include <iostream>
 #include <fstream>
 #include "BanEditor.h"
 #include <QTime>
 #include "Net.h"
+#include <QString>
+#include <string>
 
 #if defined(USE_STATIC_QT_PLUGINS) && QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_IMPORT_PLUGIN(qtaccessiblewidgets)
@@ -558,7 +561,7 @@ int main(int argc, char **argv) {
 
 	ofstream outputFile;
 	outputFile.open("outputFile.txt",ios::app); // append
-	outputFile << "====[QList]=============================" << endl;
+	outputFile << "====[QVector]=============================" << endl;
 
 	// Instantiate BanList
 	time = QTime::currentTime();
@@ -573,18 +576,28 @@ int main(int argc, char **argv) {
 	outputFile << "Instantiation of BanEditor: " << time.msecsTo(QTime::currentTime()) << " ms" << endl;
 
 	// Instantiate some bans
-	uint numBans = 8192;
+	uint numBans = 1000000;
 	time = QTime::currentTime();
 	for(uint i=0;i<numBans;i++){
 		Ban b;
 		// Establish ban details (local; edit these)
 		HostAddress address;
-		int mask = 69;		
-		QString username;	
-		QString hash;	
-		QString reason;	
+		for(quint16 j=0;j<8;j++) address.shorts[(int)j]=(quint16)(i%(j+5));
+		for(quint32 k=0;k<4;k++) address.hash[(int)k]=(quint32)(i%(k+5));
+		address.addr[0]= (quint64)(i%9);
+		address.addr[1]= (quint64)(i%9);
+		int mask = i%69;
+		//string str="BlahBlahBlah";
+		QString username;
+		QString hash;
+		QString reason;
+		for(int BanIndex=0;BanIndex<(i%10+5);BanIndex++) {
+			username[BanIndex]=(char)('a'+i%15);
+			hash[BanIndex]=(char)('a'+i%15);
+			reason[BanIndex]=(char)('a'+i%15);
+		}
 		QDateTime start;
-		unsigned int duration;
+		unsigned int duration=i%1000;
 		// Assign details to ban (on object; don't edit)
 		b.haAddress = address;
 		b.iMask = mask;
