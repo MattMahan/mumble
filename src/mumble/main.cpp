@@ -578,6 +578,13 @@ int main(int argc, char **argv) {
 	// Instantiate some bans
 	uint numBans = 1000000;
 	time = QTime::currentTime();
+	QString username;
+	QString hash;
+	QString reason;
+	int mask;
+	int BanIndex;
+	unsigned int duration;
+	QDateTime start;
 	for(uint i=0;i<numBans;i++){
 		Ban b;
 		// Establish ban details (local; edit these)
@@ -586,18 +593,14 @@ int main(int argc, char **argv) {
 		for(quint32 k=0;k<4;k++) address.hash[(int)k]=(quint32)(i%(k+5));
 		address.addr[0]= (quint64)(i%9);
 		address.addr[1]= (quint64)(i%9);
-		int mask = i%69;
+		mask = i%69;
 		//string str="BlahBlahBlah";
-		QString username;
-		QString hash;
-		QString reason;
-		for(int BanIndex=0;BanIndex<(i%10+5);BanIndex++) {
+		for(BanIndex=0;BanIndex<(i%10+5);BanIndex++) {
 			username[BanIndex]=(char)('a'+i%15);
 			hash[BanIndex]=(char)('a'+i%15);
 			reason[BanIndex]=(char)('a'+i%15);
 		}
-		QDateTime start;
-		unsigned int duration=i%1000;
+		duration=i%1000;
 		// Assign details to ban (on object; don't edit)
 		b.haAddress = address;
 		b.iMask = mask;
