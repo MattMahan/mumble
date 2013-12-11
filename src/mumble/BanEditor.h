@@ -44,7 +44,7 @@ class BanEditor : public QDialog, public Ui::BanEditor {
 		Q_OBJECT
 		Q_DISABLE_COPY(BanEditor)
 	protected:
-		QList<Ban> qlBans;
+		QVector<Ban> qlBans;
 
 		int maskDefaultValue;
 
